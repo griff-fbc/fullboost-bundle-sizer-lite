@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Boost Bundle Sizer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Spline+Sans+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    color-scheme: dark;
+    --copper: #1559d6;
+    --copper-bright: #3d82f5;
+    --ink: #ffffff;
+    --ink-soft: #d6dce6;
+    --paper: #0e131b;
+    --paper-2: #2b323d;
+    --line: #3d4654;
+    --good: #3ecf6a;
+    --warn: #c9a227;
+    --hot: #ff4d4d;
+    --shadow: rgba(0, 0, 0, 0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; background: #000000; }
+
+  body {
+    font-family: 'Archivo', system-ui, sans-serif;
+    background: #000000;
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 9px 12px 20px;
+    min-height: 100vh;
+  }
+
+  .wrap { max-width: 560px; margin: 0 auto; }
+  .masthead { margin-bottom: 10px; }
+
+  h1 {
+    font-size: clamp(22px, 6vw, 30px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+  }
+  h1 .accent { color: var(--copper-bright); }
+  .masthead-top { display: flex; align-items: center; gap: 12px; }
+  .logo-link { display: inline-flex; flex-shrink: 0; line-height: 0; }
+  .title-link { color: inherit; text-decoration: none; }
+  .title-link:hover { text-decoration: none; }
+  .fb-logo { height: 38px; width: auto; flex-shrink: 0; }
+  .masthead-sub {
+    font-family: 'Spline Sans Mono', monospace;
+    font-size: 11px; letter-spacing: 0.04em;
+    color: var(--ink-soft); margin-top: 6px;
+  }
+  .masthead-sub .lite {
+    color: var(--copper-bright); font-weight: 600;
+    background: rgba(61,130,245,0.16); padding: 1px 7px; border-radius: 5px;
+    margin-left: 2px; letter-spacing: 0.08em; text-transform: uppercase; font-size: 9.5px;
+  }
+
+  .card {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    padding: 11px 13px;
+    box-shadow: 0 1px 0 var(--shadow);
+    margin-bottom: 8px;
+  }
+
+  .field-label {
+    font-family: 'Spline Sans Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* ---- spec grid (input model) ---- */
+  .sp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+    gap: 7px;
+    margin-bottom: 12px;
+  }
+  .sp-col { display: flex; flex-direction: column; gap: 6px; }
+  .sp-col .sp-head {
+    font-family: 'Spline Sans Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 600; text-align: center;
+  }
+  .sp-spectoggle {
+    display: flex; width: 100%;
+    border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
+  }
+  .sp-spectoggle button {
+    flex: 1; min-width: 0;
+    font-family: 'Spline Sans Mono', monospace; font-size: 9.5px; font-weight: 600;
+    padding: 4px 2px; border: none; border-left: 1px solid var(--line);
+    background: var(--paper); color: var(--ink-soft); cursor: pointer;
+    transition: all 0.1s ease;
+  }
+  .sp-spectoggle button:first-child { border-left: none; }
+  .sp-spectoggle button.active { background: var(--copper); color: #fff; }
+  .sp-spectoggle button:disabled { opacity: 0.35; cursor: default; }
+  .sp-col input {
+    width: 100%;
+    font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 14px;
+    padding: 9px 6px; border: 1px solid var(--line); border-radius: 8px;
+    background: var(--paper); color: var(--ink);
+    text-align: center; -moz-appearance: textfield; -webkit-appearance: none; appearance: none;
+  }
+  .sp-col input::-webkit-outer-spin-button, .sp-col input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .sp-col input:focus { outline: 2px solid var(--copper); border-color: var(--copper); }
+  .sp-col.off .dd-toggle { color: var(--ink-soft); opacity: 0.7; }
+  .sp-col.off input { opacity: 0.4; }
+  .sp-swatch-row {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: 'Spline Sans Mono', monospace; font-size: 9.5px; color: var(--ink-soft);
+    margin: -2px 0;
+  }
+  .sp-swatch {
+    width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.55);
+  }
+  .sp-swatch-row[data-empty="1"] { opacity: 0.35; }
+  .sp-mult-label {
+    font-family: 'Spline Sans Mono', monospace; font-size: 8.5px;
+    letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft);
+    text-align: center; opacity: 0.7; margin-top: -2px;
+  }
+  .sp-col .sp-remove {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--line); color: var(--ink-soft);
+    font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer; padding: 5px 10px; border-radius: 7px;
+    font-family: 'Spline Sans Mono', monospace; transition: all 0.12s ease;
+  }
+  .sp-col .sp-remove:hover { background: rgba(255,77,77,0.14); border-color: var(--hot); color: var(--hot); }
+
+  /* custom dropdown (gauge) */
+  .dd { position: relative; width: 100%; }
+  .dd-toggle {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 14px;
+    padding: 9px 6px; border: 1px solid var(--line); border-radius: 8px;
+    background: var(--paper); color: var(--ink); cursor: pointer; transition: border-color 0.12s ease;
+  }
+  .dd-toggle:hover { border-color: var(--copper); }
+  .dd.open .dd-toggle { border-color: var(--copper); }
+  .dd-chev { font-size: 9px; color: var(--ink-soft); transition: transform 0.18s ease; }
+  .dd.open .dd-chev { transform: rotate(180deg); }
+  .dd-menu {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 50;
+    background: #1c2330; border: 1px solid var(--line); border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.55);
+    max-height: 220px; overflow-y: auto; padding: 4px; display: none;
+  }
+  .dd.open .dd-menu { display: block; }
+  .dd-opt {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 13px;
+    color: var(--ink); padding: 8px 6px; border-radius: 6px;
+    cursor: pointer; transition: background 0.1s ease;
+  }
+  .dd-opt .dd-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.55); flex-shrink: 0; }
+  .dd-opt:hover { background: rgba(61,130,245,0.18); }
+  .dd-opt.sel { background: var(--copper); color: #fff; }
+
+  .sp-addbtn {
+    width: 100%; font-family: 'Archivo', sans-serif; font-size: 13px; font-weight: 600;
+    padding: 11px; border: 1px dashed var(--copper-bright); border-radius: 9px;
+    background: rgba(61,130,245,0.08); color: var(--copper-bright);
+    cursor: pointer; transition: all 0.15s ease;
+  }
+  .sp-addbtn:hover { background: rgba(61,130,245,0.16); border-style: solid; }
+  .sp-addbtn:disabled { opacity: 0.4; cursor: default; border-color: var(--line); color: var(--ink-soft); }
+  .sp-addbtn:disabled:hover { background: rgba(61,130,245,0.08); }
+
+  /* ---- bundle viewport ---- */
+  .bundle-card { padding: 13px; }
+  .bundle-stage {
+    width: 100%; aspect-ratio: 1 / 1; max-height: 60vh;
+    background:
+      radial-gradient(circle at 50% 45%, rgba(61,130,245,0.06), transparent 70%),
+      var(--paper);
+    border: 1px solid var(--line); border-radius: 12px;
+    display: block; overflow: hidden;
+  }
+  .bundle-stage svg { width: 100%; height: 100%; display: block; }
+  .bundle-empty {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; padding: 24px; text-align: center;
+    font-family: 'Spline Sans Mono', monospace; font-size: 12px;
+    color: var(--ink-soft); line-height: 1.6;
+  }
+
+  /* ---- headline diameter output ---- */
+  .head-result {
+    display: grid; grid-template-columns: 1fr; gap: 1px;
+    background: var(--line); border: 1px solid var(--line);
+    border-radius: 12px; overflow: hidden; margin-top: 11px;
+  }
+  .head-top {
+    background: var(--copper); padding: 13px 14px; text-align: center;
+  }
+  .head-k {
+    font-family: 'Spline Sans Mono', monospace; font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.8);
+    margin-bottom: 3px;
+  }
+  .head-v {
+    font-family: 'Spline Sans Mono', monospace; font-weight: 600;
+    font-size: clamp(32px, 9vw, 44px); line-height: 0.95; letter-spacing: -0.02em; color: #fff;
+  }
+  .head-v .unit { font-size: 0.34em; font-weight: 500; color: rgba(255,255,255,0.8); letter-spacing: 0; margin-left: 6px; }
+  .head-v.empty { color: rgba(255,255,255,0.45); }
+  .head-sub {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line);
+  }
+  .head-cell { background: var(--paper-2); padding: 9px 6px; text-align: center; }
+  .head-cell .hc-v { font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 16px; }
+  .head-cell .hc-k { font-size: 9px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin-top: 3px; }
+  .head-note { font-size: 11.5px; color: var(--ink-soft); margin-top: 11px; line-height: 1.5; }
+
+  /* ---- locked / paid teaser ---- */
+  .locked {
+    margin-top: 8px; padding: 11px 13px;
+    border: 1px dashed var(--line); border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+  }
+  .locked-head {
+    font-family: 'Spline Sans Mono', monospace; font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft);
+    font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 7px;
+  }
+  .locked-head .lk { color: var(--copper-bright); }
+  .locked-list { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .locked-chip {
+    font-family: 'Spline Sans Mono', monospace; font-size: 11px; font-weight: 500;
+    color: var(--ink-soft); padding: 5px 10px;
+    border: 1px solid var(--line); border-radius: 20px; background: var(--paper);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .locked-chip:before { content: "🔒"; font-size: 9px; opacity: 0.7; }
+
+  /* tooltip */
+  .tip { position: relative; display: inline-flex; outline: none; vertical-align: middle; }
+  .tip-icon {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1px solid var(--ink-soft); color: var(--ink-soft);
+    font-family: 'Spline Sans Mono', monospace; font-size: 10px; font-weight: 600; font-style: italic;
+    display: flex; align-items: center; justify-content: center;
+    cursor: help; line-height: 1; user-select: none; transition: all 0.15s ease;
+  }
+  .tip:hover .tip-icon, .tip:focus .tip-icon, .tip.open .tip-icon { background: var(--copper); border-color: var(--copper); color: #fff; }
+  .tip-bubble {
+    position: absolute; bottom: calc(100% + 10px); right: -8px; width: 250px;
+    background: #20283a; color: #f0f0f0; padding: 13px 15px; border-radius: 11px;
+    border: 1px solid var(--line); box-shadow: 0 6px 22px rgba(0,0,0,0.5);
+    font-size: 12px; line-height: 1.5; text-transform: none; letter-spacing: normal; font-weight: 400;
+    opacity: 0; visibility: hidden; transform: translateY(4px);
+    transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s; z-index: 30;
+  }
+  .tip:hover .tip-bubble, .tip:focus .tip-bubble, .tip.open .tip-bubble { opacity: 1; visibility: visible; transform: none; }
+  .tip-bubble:after { content: ""; position: absolute; top: 100%; right: 12px; border: 7px solid transparent; border-top-color: #20283a; }
+  .tip-bubble strong { display: block; color: #fff; font-size: 12.5px; margin-bottom: 7px; }
+  .tip-bubble .tip-line { display: block; margin-bottom: 7px; color: #d0d0d0; }
+  .tip-bubble .tip-line:last-child { margin-bottom: 0; }
+  .tip-bubble .tip-line b { color: var(--copper-bright); font-weight: 600; }
+
+  .card-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    margin-bottom: 11px;
+  }
+  .card-head .field-label { margin-bottom: 0; }
+
+  /* ---- references ---- */
+  .ref-details { margin: 0; }
+  .ref-summary {
+    font-family: 'Spline Sans Mono', monospace; font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft);
+    cursor: pointer; list-style: none; user-select: none;
+    display: flex; align-items: center; gap: 7px; padding: 1px 0;
+  }
+  .ref-summary::-webkit-details-marker { display: none; }
+  .ref-summary:hover { color: var(--ink); }
+  .ref-chev { font-size: 10px; transition: transform 0.18s ease; display: inline-block; }
+  .ref-details[open] .ref-chev { transform: rotate(90deg); }
+  .ref-body { margin-top: 9px; padding-top: 9px; border-top: 1px dashed var(--line); }
+  .ref-body p { font-size: 11px; line-height: 1.45; color: var(--ink-soft); }
+  .ref-body p strong { color: var(--ink); }
+  .ref-body a { color: var(--copper-bright); text-decoration: none; border-bottom: 1px solid rgba(61,130,245,0.45); }
+  .ref-body a:hover { border-bottom-color: var(--copper); }
+
+  .disclaimer {
+    font-size: 11px; line-height: 1.45; color: var(--ink-soft);
+    margin-top: 16px; padding: 11px 14px; border-left: 2px solid var(--copper);
+    background: var(--paper-2); border-radius: 0 8px 8px 0;
+  }
+  .disclaimer strong { color: var(--ink); }
+
+  /* ---- credit ---- */
+  .credit {
+    margin-top: 18px; padding: 16px 14px 4px;
+    border-top: 1px solid var(--line); text-align: center;
+  }
+  .credit-built { font-family: 'Archivo', sans-serif; font-size: 14px; font-weight: 700; color: var(--ink); margin: 0 0 10px; }
+  .credit-built a { color: var(--copper-bright); text-decoration: none; border-bottom: 1px solid transparent; }
+  .credit-built a:hover { border-bottom-color: var(--copper-bright); }
+  .credit-line { font-size: 11.5px; line-height: 1.5; color: var(--ink-soft); margin: 0 0 6px; }
+  .credit-line:last-child { margin-bottom: 0; }
+  .credit-line a { color: var(--copper-bright); text-decoration: none; border-bottom: 1px solid rgba(61,130,245,0.4); }
+  .credit-line a:hover { border-bottom-color: var(--copper-bright); }
+  .credit-brew { color: var(--copper-bright); font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(61,130,245,0.4); }
+  .credit-brew:hover { border-bottom-color: var(--copper-bright); }
+
+  /* ---- feedback / validation ask ---- */
+  .feedback {
+    margin-top: 18px; padding: 14px 16px;
+    border: 1px solid var(--line); border-radius: 11px;
+    background: rgba(61,130,245,0.06); text-align: center;
+  }
+  .feedback-head {
+    font-family: 'Archivo', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--ink); margin: 0 0 6px;
+  }
+  .feedback-body { font-size: 12px; line-height: 1.55; color: var(--ink-soft); margin: 0; }
+  .feedback-body a { color: var(--copper-bright); text-decoration: none; border-bottom: 1px solid rgba(61,130,245,0.4); }
+  .feedback-body a:hover { border-bottom-color: var(--copper-bright); }
+
+  /* ---- disclaimer gate ---- */
+  .gate {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.72);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 16px; z-index: 100;
+  }
+  .gate.hidden { display: none; }
+  .gate-card {
+    background: var(--paper-2); border: 1px solid var(--line); border-radius: 16px;
+    max-width: 440px; width: 100%; padding: 28px 26px 24px;
+    box-shadow: 0 18px 50px rgba(20,14,8,0.4); animation: gateIn 0.25s ease;
+  }
+  @keyframes gateIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
+  .gate-eyebrow {
+    font-family: 'Spline Sans Mono', monospace; font-size: 15px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--hot);
+    font-weight: 700; margin-bottom: 10px;
+  }
+  .gate-card h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.1; margin-bottom: 14px; }
+  .gate-card p { font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); margin-bottom: 12px; }
+  .gate-card p .co { color: var(--ink); font-weight: 600; }
+  .gate-btn {
+    width: 100%; font-family: 'Archivo', sans-serif; font-size: 15px; font-weight: 700;
+    padding: 14px; border: none; border-radius: 10px;
+    background: var(--copper); color: #fff; cursor: pointer; margin-top: 8px; transition: background 0.15s ease;
+  }
+  .gate-btn:hover { background: var(--copper-bright); }
+
+  @media (max-width: 420px) { .tip-bubble { width: 220px; right: -6px; } }
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="gate-eyebrow">Before you start</div>
+    <h2>DISCLAIMER: DON'T BE A WOUNDER</h2>
+    <p>This tool is provided for <span class="co">guidance only</span>. Bundle diameters are geometric estimates from published wire dimensions, so you are responsible for verifying fit against real parts and the applicable standards for your application.</p>
+    <p><span class="co">Full Boost Consulting Ltd</span> accept no liability for any loss, damage, injury, or cost arising from the use of this tool or reliance on its outputs.</p>
+    <button class="gate-btn" id="gateBtn">I understand</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="masthead-top">
+      <a href="https://fullboostconsulting.com/" target="_top" class="logo-link"><img class="fb-logo" src="data:image/png;base64,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" alt="Full Boost Consulting FB logo"></a>
+      <h1><a href="https://fullboostconsulting.com/" target="_top" class="title-link">FULL BOOST <span class="accent">Bundle Sizer</span></a></h1>
+    </div>
+    <p class="masthead-sub">Bare bundle diameter from packed wires <span class="lite">Lite</span></p>
+  </header>
+
+  <section class="card">
+    <div class="card-head">
+      <span class="field-label">Wires in the bundle</span>
+      <span class="tip" tabindex="0"><span class="tip-icon">i</span>
+        <span class="tip-bubble">
+          <strong>Add your wires</strong>
+          <span class="tip-line">Pick a spec (<b>55M</b> or <b>55A</b>), a gauge, and how many of that wire are in the bundle.</span>
+          <span class="tip-line">55M covers 24-30 AWG; 55A covers 8-30. Below 22 AWG, only 55A is available.</span>
+        </span>
+      </span>
+    </div>
+    <div class="sp-grid" id="spGrid"></div>
+    <button class="sp-addbtn" id="spAdd">+ Add wire spec</button>
+  </section>
+
+  <section class="card bundle-card">
+    <div class="card-head">
+      <span class="field-label">Packed bundle</span>
+      <span class="tip" tabindex="0"><span class="tip-icon">i</span>
+        <span class="tip-bubble">
+          <strong>How this is drawn</strong>
+          <span class="tip-line">Each circle is a wire at its <b>finished OD</b> (conductor + insulation) from the TE control drawing.</span>
+          <span class="tip-line">Wires are packed tight and an enclosing circle is drawn around them. The headline is that circle's diameter: the bare bundle, no sleeving.</span>
+        </span>
+      </span>
+    </div>
+    <div class="bundle-stage" id="stage">
+      <div class="bundle-empty" id="stageEmpty">Add a wire spec above to pack the bundle.</div>
+    </div>
+
+    <div class="head-result">
+      <div class="head-top">
+        <div class="head-k">Bundle diameter</div>
+        <div class="head-v empty" id="headDia">-</div>
+      </div>
+      <div class="head-sub">
+        <div class="head-cell"><div class="hc-v" id="hcCount">-</div><div class="hc-k">wires</div></div>
+        <div class="head-cell"><div class="hc-v" id="hcArea">-</div><div class="hc-k">bundle CSA</div></div>
+        <div class="head-cell"><div class="hc-v" id="hcFill">-</div><div class="hc-k">fill</div></div>
+      </div>
+    </div>
+    <p class="head-note" id="headNote">Add wires to size the bundle. Diameter is the smallest circle that encloses all packed wires at their finished OD.</p>
+  </section>
+
+  <div class="locked">
+    <div class="locked-head"><span class="lk">+</span> In the full version</div>
+    <div class="locked-list">
+      <span class="locked-chip">Rearrange bundle</span>
+      <span class="locked-chip">Export PNG / PDF / DXF</span>
+      <span class="locked-chip">Sleeving</span>
+      <span class="locked-chip">Multicores</span>
+    </div>
+  </div>
+
+  <section class="card" style="margin-top:8px;">
+    <details class="ref-details">
+      <summary class="ref-summary"><span class="ref-chev">▸</span> Reference &amp; method notes</summary>
+      <div class="ref-body">
+        <p style="margin:0;"><strong>Geometry only.</strong> Each wire is drawn at its <strong>finished outer diameter</strong> (conductor plus insulation) taken from TE Connectivity control drawings. <strong>55A</strong> (55A0111 / M22759/32, tin-coated copper, ETFE, 150&deg;C) and <strong>55M</strong> (55M0414, silver-plated alloy, ETFE, 200&deg;C). Wires are packed by a deterministic nearest-fit routine and the <strong>bundle diameter</strong> is the smallest circle that encloses every wire. Real looms settle differently under tension and tape, so treat this as a tidy-pack estimate, not a guaranteed dimension. No sleeving allowance is included in this lite version.</p>
+        <p style="margin:8px 0 0;"><strong>Fill</strong> is the summed wire OD area divided by the enclosing-circle area. It's a rough measure of how tightly the bundle packs.</p>
+        <p style="margin:8px 0 0;"><strong>Sources:</strong> finished-wire diameters from <a href="https://www.te.com" target="_blank" rel="noopener">TE Connectivity</a> control drawings (55A0111, 55M0414).</p>
+      </div>
+    </details>
+  </section>
+
+  <div class="disclaimer">
+    <strong>Guidance only.</strong> Verify every bundle dimension against real parts and the applicable standards before committing to a harness build. If in doubt, build a test piece. Full Boost Consulting Ltd accept no liability for reliance on these outputs.
+  </div>
+
+  <div class="feedback">
+    <p class="feedback-head">Used it, then built it?</p>
+    <p class="feedback-body">If this tool saved you some time, help us make it better. <a href="mailto:Hello@fullboostconsulting.com?subject=Bundle%20Sizer%20feedback">Send us a screenshot</a> of the tool next to the measured diameter of the finished bundle. Every real data point helps us improve the tool for everyone.</p>
+  </div>
+
+  <div class="credit">
+    <p class="credit-built">Built by <a href="https://fullboostconsulting.com/" target="_blank" rel="noopener">Full Boost Consulting Ltd</a></p>
+    <p class="credit-line">Like the tool? Spotted an issue? Want the full version, or one built for your team? <a href="https://fullboostconsulting.com/contact" target="_blank" rel="noopener">Get in touch</a>. We'd love to hear from you.</p>
+    <p class="credit-line">And if it saved you some time, <a href="https://ko-fi.com/fullboostconsulting" target="_blank" rel="noopener" class="credit-brew">buy us a brew</a> ☕</p>
+  </div>
+
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  // FB logo for the bundle watermark - reuse the masthead image's own data URI
+  // (no second copy of the base64) and its natural aspect ratio.
+  const LOGO_SRC = document.querySelector('.fb-logo') ? document.querySelector('.fb-logo').getAttribute('src') : "";
+  const LOGO_B64 = LOGO_SRC.indexOf(',')>=0 ? LOGO_SRC.slice(LOGO_SRC.indexOf(',')+1) : "";
+  const LOGO_AR = 0.597; // 120/201 from FB_Only_Hi_Res
+
+  // ---- TE finished-wire OD (mm). Source: TE control drawings 55A0111, 55M0414. ----
+  const TE = {
+    "55a": {
+      label: "55A",
+      range: ["8","10","12","14","16","18","20","22","24","26","28","30"],
+      od: { "8":4.78,"10":3.25,"12":2.62,"14":2.16,"16":1.73,"18":1.52,"20":1.27,"22":1.09,"24":0.94,"26":0.81,"28":0.69,"30":0.61 }
+    },
+    "55m": {
+      label: "55M",
+      range: ["24","26","28","30"],
+      od: { "24":0.81,"26":0.69,"28":0.58,"30":0.51 }
+    }
+  };
+
+  // resistor colour code on the 2nd AWG digit. Primary 22-28; 20 & 30 bookends.
+  const AWG_COLOUR = {
+    "20":"#ff7a18", // orange
+    "22":"#e23b3b", // red
+    "24":"#e8c531", // yellow
+    "26":"#3d82f5", // blue
+    "28":"#9aa3b2", // grey
+    "30":"#11151c"  // black
+  };
+  // gauges offered in the lite tool (nothing finer than 30)
+  const GAUGES = ["20","22","24","26","28","30"];
+
+  // default spec for a gauge: 55M default; snap to 55A for 20 & 22 (out of 55M range)
+  function defaultSpecFor(g){ return TE["55m"].od[g]!=null ? "55m" : "55a"; }
+  // which specs can carry this gauge
+  function specsFor(g){
+    const out=[];
+    if(TE["55m"].od[g]!=null) out.push("55m");
+    if(TE["55a"].od[g]!=null) out.push("55a");
+    return out;
+  }
+  function odFor(spec,g){ const s=TE[spec]; return s && s.od[g]!=null ? s.od[g] : null; }
+
+  // Representative insulation wall (mm), derived from each TE drawing as
+  // (finished OD - max stranded conductor dia)/2. This is the nominal wall the
+  // drawing implies, not a separately published figure (except 55M, whose sheet
+  // states a 0.085 mm minimum wall - our derived ~0.10 mm sits just above it).
+  // Used only to draw a representative conductor core inside the insulation.
+  const WALL = {
+    "55a": { "8":0.193,"10":0.190,"12":0.180,"14":0.204,"16":0.166,"18":0.138,"20":0.140,"22":0.151,"24":0.152,"26":0.151,"28":0.142,"30":0.140 },
+    "55m": { "24":0.100,"26":0.105,"28":0.100,"30":0.100 }
+  };
+  // conductor (copper) radius for a wire = OD/2 - wall, floored so it never inverts
+  function conductorRadius(spec,g){
+    const od=odFor(spec,g); if(od==null) return null;
+    const w=(WALL[spec]&&WALL[spec][g]!=null)?WALL[spec][g]:0.14;
+    return Math.max(od/2 - w, od*0.18);
+  }
+  function colourFor(g){ return AWG_COLOUR[g] || "#9aa3b2"; }
+  function trim(n){ return (Math.round(n*1000)/1000).toString(); }
+
+  const spGrid=$('spGrid'), spAdd=$('spAdd');
+  const SP_MAX = 8;
+
+  // ---------- spec column UI ----------
+  function renumber(){
+    const cols=[...spGrid.querySelectorAll('.sp-col')];
+    cols.forEach((col,i)=>{
+      col.querySelector('.sp-head').textContent="Wire spec "+(i+1);
+      col.querySelector('.sp-remove').style.visibility = cols.length>1 ? 'visible':'hidden';
+    });
+  }
+  function buildDdOpts(){
+    return GAUGES.map(g=>
+      `<div class="dd-opt" data-value="${g}"><span class="dd-dot" style="background:${colourFor(g)}"></span>${g} AWG</div>`
+    ).join('');
+  }
+  function setDropdown(dd,value){
+    dd.dataset.value=value;
+    const opt=[...dd.querySelectorAll('.dd-opt')].find(o=>o.dataset.value===value);
+    const dot=colourFor(value);
+    dd.querySelector('.dd-label').innerHTML = opt
+      ? `<span class="dd-dot" style="background:${dot}"></span>${value} AWG` : "-";
+    dd.querySelectorAll('.dd-opt').forEach(o=>o.classList.toggle('sel',o.dataset.value===value));
+  }
+  function initDropdown(dd){
+    dd.querySelector('.dd-toggle').addEventListener('click',e=>{
+      e.stopPropagation();
+      const wasOpen=dd.classList.contains('open');
+      document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));
+      if(!wasOpen) dd.classList.add('open');
+    });
+    dd.querySelectorAll('.dd-opt').forEach(opt=>{
+      opt.addEventListener('click',e=>{
+        e.stopPropagation();
+        const g=opt.dataset.value;
+        const col=dd.closest('.sp-col');
+        // snap spec if current spec can't carry the new gauge
+        let spec=col.dataset.spec;
+        if(odFor(spec,g)==null) spec=defaultSpecFor(g);
+        col.dataset.spec=spec;
+        setColSpec(col,spec);
+        setDropdown(dd,g);
+        dd.classList.remove('open');
+        refreshSpecAvail(col);
+        render();
+      });
+    });
+  }
+  function setColSpec(col,spec){
+    col.querySelectorAll('.sp-spectoggle button').forEach(b=>b.classList.toggle('active',b.dataset.spec===spec));
+  }
+  // grey out spec buttons that can't carry the chosen gauge
+  function refreshSpecAvail(col){
+    const g=col.querySelector('.dd').dataset.value;
+    col.querySelectorAll('.sp-spectoggle button').forEach(b=>{
+      const ok = !g || odFor(b.dataset.spec,g)!=null;
+      b.disabled=!ok;
+    });
+  }
+
+  function addSpec(gauge, spec){
+    if(spGrid.querySelectorAll('.sp-col').length>=SP_MAX) return;
+    const g = gauge || "28";
+    const sp = spec || defaultSpecFor(g);
+    const col=document.createElement('div');
+    col.className='sp-col';
+    col.dataset.spec=sp;
+    col.innerHTML =
+      `<div class="sp-head"></div>`+
+      `<div class="sp-spectoggle">`+
+        `<button type="button" data-spec="55m">55M</button>`+
+        `<button type="button" data-spec="55a">55A</button>`+
+      `</div>`+
+      `<div class="dd" data-value="">`+
+        `<button type="button" class="dd-toggle"><span class="dd-label">-</span><span class="dd-chev">▾</span></button>`+
+        `<div class="dd-menu">${buildDdOpts()}</div>`+
+      `</div>`+
+      `<div class="sp-swatch-row" data-empty="1"><span class="sp-swatch"></span><span class="sp-od">- mm OD</span></div>`+
+      `<input type="number" min="1" max="99" step="1" value="1" inputmode="numeric">`+
+      `<div class="sp-mult-label">× qty</div>`+
+      `<button class="sp-remove" title="Remove">remove</button>`;
+    spGrid.appendChild(col);
+
+    const dd=col.querySelector('.dd');
+    setColSpec(col,sp);
+    initDropdown(dd);
+    setDropdown(dd,g);
+    refreshSpecAvail(col);
+
+    col.querySelectorAll('.sp-spectoggle button').forEach(btn=>{
+      btn.addEventListener('click',e=>{
+        e.stopPropagation();
+        if(btn.disabled) return;
+        col.dataset.spec=btn.dataset.spec;
+        setColSpec(col,btn.dataset.spec);
+        render();
+      });
+    });
+    col.querySelector('input').addEventListener('input',render);
+    col.querySelector('.sp-remove').addEventListener('click',()=>{
+      if(spGrid.querySelectorAll('.sp-col').length<=1) return;
+      col.remove(); renumber(); updateAddBtn(); render();
+    });
+
+    renumber(); updateAddBtn(); render();
+  }
+
+  function updateAddBtn(){
+    const n=spGrid.querySelectorAll('.sp-col').length;
+    spAdd.disabled = n>=SP_MAX;
+    spAdd.textContent = n>=SP_MAX ? "Maximum 8 wire specs" : "+ Add wire spec";
+  }
+
+  // ---------- gather wires ----------
+  function gatherWires(){
+    const wires=[]; // {od, colour, spec, g}
+    [...spGrid.querySelectorAll('.sp-col')].forEach(col=>{
+      const g=col.querySelector('.dd').dataset.value;
+      const spec=col.dataset.spec;
+      const swatch=col.querySelector('.sp-swatch-row');
+      const od=odFor(spec,g);
+      if(!g || od==null){
+        col.classList.add('off');
+        swatch.dataset.empty="1";
+        swatch.querySelector('.sp-swatch').style.background="transparent";
+        swatch.querySelector('.sp-od').textContent="- mm OD";
+        return;
+      }
+      col.classList.remove('off');
+      swatch.dataset.empty="0";
+      swatch.querySelector('.sp-swatch').style.background=colourFor(g);
+      swatch.querySelector('.sp-od').textContent=trim(od)+" mm OD";
+      let qty=parseInt(col.querySelector('input').value,10);
+      if(isNaN(qty)||qty<1) qty=1;
+      const cr=conductorRadius(spec,g);
+      for(let i=0;i<qty;i++) wires.push({od, r:od/2, cr, colour:colourFor(g), spec, g});
+    });
+    return wires;
+  }
+
+  // ---------- circle packing ----------
+  // Deterministic nearest-fit insertion: place largest first at centre, then each
+  // subsequent wire at the position (tangent to two placed wires, or to one) that
+  // minimises distance from the bundle centroid without overlapping.
+  function packCircles(wires){
+    const placed=[]; // {x,y,r,...}
+    const items=[...wires].sort((a,b)=>b.r-a.r); // largest first
+    if(items.length===0) return placed;
+
+    placed.push({...items[0], x:0, y:0});
+    if(items.length===1) return placed;
+
+    const eps=1e-6;
+    function overlaps(x,y,r,ignoreA,ignoreB){
+      for(let i=0;i<placed.length;i++){
+        if(i===ignoreA||i===ignoreB) continue;
+        const p=placed[i];
+        const d=Math.hypot(x-p.x,y-p.y);
+        if(d < r+p.r-1e-4) return true;
+      }
+      return false;
+    }
+    // candidate positions tangent to two placed circles
+    function tangentPositions(r,i,j){
+      const a=placed[i], b=placed[j];
+      const d=Math.hypot(b.x-a.x,b.y-a.y);
+      const r1=a.r+r, r2=b.r+r;
+      if(d>r1+r2 || d<Math.abs(r1-r2) || d<eps) return [];
+      const ux=(b.x-a.x)/d, uy=(b.y-a.y)/d;
+      const xm=(d*d - r2*r2 + r1*r1)/(2*d);
+      const h2=r1*r1 - xm*xm;
+      if(h2<0) return [];
+      const h=Math.sqrt(h2);
+      const bx=a.x+xm*ux, by=a.y+xm*uy;
+      return [
+        {x:bx - h*uy, y:by + h*ux},
+        {x:bx + h*uy, y:by - h*ux}
+      ];
+    }
+    function centroid(){
+      let sx=0,sy=0,sw=0;
+      placed.forEach(p=>{ sx+=p.x*p.r*p.r; sy+=p.y*p.r*p.r; sw+=p.r*p.r; });
+      return {x:sx/sw, y:sy/sw};
+    }
+
+    for(let k=1;k<items.length;k++){
+      const r=items[k].r;
+      const c=centroid();
+      let best=null, bestScore=Infinity;
+      // try tangent-to-two positions
+      for(let i=0;i<placed.length;i++){
+        for(let j=i+1;j<placed.length;j++){
+          const cands=tangentPositions(r,i,j);
+          for(const pos of cands){
+            if(overlaps(pos.x,pos.y,r,i,j)) continue;
+            // score: keep bundle compact -> distance of this circle's far edge from centroid
+            const dC=Math.hypot(pos.x-c.x,pos.y-c.y)+r;
+            if(dC<bestScore-1e-9){ bestScore=dC; best=pos; }
+          }
+        }
+      }
+      // fallback: tangent to a single circle, scan angles
+      if(!best){
+        for(let i=0;i<placed.length;i++){
+          const p=placed[i];
+          for(let a=0;a<360;a+=6){
+            const ang=a*Math.PI/180;
+            const x=p.x+(p.r+r)*Math.cos(ang);
+            const y=p.y+(p.r+r)*Math.sin(ang);
+            if(overlaps(x,y,r,i,-1)) continue;
+            const dC=Math.hypot(x-c.x,y-c.y)+r;
+            if(dC<bestScore-1e-9){ bestScore=dC; best={x,y}; }
+          }
+        }
+      }
+      if(!best){ // last resort: stack to the right
+        let x=0; placed.forEach(p=>{ x=Math.max(x,p.x+p.r); });
+        best={x:x+r, y:0};
+      }
+      placed.push({...items[k], x:best.x, y:best.y});
+    }
+    return placed;
+  }
+
+  // minimal enclosing circle (Welzl) over circle outer edges
+  function enclosingCircle(placed){
+    if(placed.length===0) return {x:0,y:0,r:0};
+    // expand each circle to points isn't exact; use iterative: treat as weighted.
+    // Welzl on centres with radius offset via a robust approximation:
+    // start from bounding, then shrink by checking each circle's farthest reach.
+    // Simpler stable method: ritter-style then refine.
+    let cx=0, cy=0;
+    placed.forEach(p=>{ cx+=p.x; cy+=p.y; });
+    cx/=placed.length; cy/=placed.length;
+    // initial radius
+    function maxReach(x,y){
+      let m=0;
+      placed.forEach(p=>{ m=Math.max(m, Math.hypot(p.x-x,p.y-y)+p.r); });
+      return m;
+    }
+    let r=maxReach(cx,cy);
+    // gradient-ish refinement: nudge centre toward the farthest circle repeatedly
+    let step=r*0.5;
+    for(let iter=0; iter<200; iter++){
+      // find farthest circle edge
+      let far=null, fd=-1;
+      placed.forEach(p=>{ const d=Math.hypot(p.x-cx,p.y-cy)+p.r; if(d>fd){fd=d; far=p;} });
+      const dx=far.x-cx, dy=far.y-cy;
+      const dist=Math.hypot(dx,dy)||1e-9;
+      cx+=dx/dist*step; cy+=dy/dist*step;
+      const nr=maxReach(cx,cy);
+      if(nr<r) r=nr; 
+      step*=0.95;
+      if(step<r*1e-4) break;
+    }
+    r=maxReach(cx,cy);
+    return {x:cx,y:cy,r};
+  }
+
+  // ---------- render ----------
+  const stage=$('stage'), stageEmpty=$('stageEmpty');
+  const headDia=$('headDia'), hcCount=$('hcCount'), hcArea=$('hcArea'), hcFill=$('hcFill'), headNote=$('headNote');
+
+  function render(){
+    const wires=gatherWires();
+    if(wires.length===0){
+      stage.innerHTML='<div class="bundle-empty" id="stageEmpty">Add a wire spec above to pack the bundle.</div>';
+      legend.innerHTML="";
+      headDia.textContent="-"; headDia.classList.add('empty');
+      hcCount.textContent="-"; hcArea.textContent="-"; hcFill.textContent="-";
+      headNote.textContent="Add wires to size the bundle. Diameter is the smallest circle that encloses all packed wires at their finished OD.";
+      return;
+    }
+
+    const placed=packCircles(wires);
+    const enc=enclosingCircle(placed);
+    const dia=enc.r*2;
+    const wireArea=wires.reduce((s,w)=>s+Math.PI*w.r*w.r,0);
+    const encArea=Math.PI*enc.r*enc.r;
+    const fill=encArea>0 ? wireArea/encArea*100 : 0;
+
+    headDia.classList.remove('empty');
+    headDia.innerHTML = trim(Math.round(dia*100)/100)+'<span class="unit">mm</span>';
+    hcCount.textContent=wires.length;
+    hcArea.textContent=(Math.round(wireArea*10)/10)+" mm²";
+    hcFill.textContent=Math.round(fill)+"%";
+    headNote.innerHTML = `Smallest circle enclosing ${wires.length} packed wire${wires.length>1?"s":""} at finished OD. Bare bundle, no sleeving allowance.`;
+
+    drawSVG(placed,enc);
+  }
+
+  function drawSVG(placed,enc){
+    const pad = enc.r*0.12 + 0.4;
+    const minX=enc.x-enc.r-pad, minY=enc.y-enc.r-pad;
+    const size=(enc.r+pad)*2;
+    let s=`<svg viewBox="${minX} ${minY} ${size} ${size}" preserveAspectRatio="xMidYMid meet">`;
+    // enclosing circle
+    s+=`<circle cx="${enc.x}" cy="${enc.y}" r="${enc.r}" fill="none" stroke="#3d82f5" stroke-width="${enc.r*0.02+0.05}" stroke-dasharray="${enc.r*0.06} ${enc.r*0.04}" opacity="0.9"/>`;
+    // wires: insulation (gauge colour, full OD) with a representative conductor core.
+    const outline = Math.max(enc.r*0.014, 0.03);
+    placed.forEach(p=>{
+      // insulation = full finished OD, gauge colour
+      s+=`<circle cx="${p.x}" cy="${p.y}" r="${p.r}" fill="${p.colour}" stroke="rgba(255,255,255,0.85)" stroke-width="${outline}"/>`;
+      // conductor core = derived copper area, drawn as a darker concentric disc
+      const cr = (p.cr!=null && p.cr>0 && p.cr<p.r) ? p.cr : p.r*0.6;
+      s+=`<circle cx="${p.x}" cy="${p.y}" r="${cr}" fill="rgba(0,0,0,0.28)" stroke="rgba(255,255,255,0.18)" stroke-width="${outline*0.7}"/>`;
+    });
+    // faint FB brand lockup, sized and centred to the VIEW (not the bundle) so it
+    // stays a consistent size whatever the bundle scale, and a screenshot carries
+    // the mark, tool name and URL as one unit.
+    const viewCx = minX + size/2, viewCy = minY + size/2;
+    const wmW = size*0.42, wmH = wmW * (LOGO_AR);
+    const lockTop = viewCy - wmH*0.62; // nudge logo up so text sits below centre
+    s+=`<image href="data:image/png;base64,${LOGO_B64}" x="${viewCx-wmW/2}" y="${lockTop}" width="${wmW}" height="${wmH}" opacity="0.28" preserveAspectRatio="xMidYMid meet" style="pointer-events:none"/>`;
+    const capSize = size*0.034;
+    const line1Y = lockTop + wmH + capSize*1.15;
+    const line2Y = line1Y + capSize*1.25;
+    s+=`<text x="${viewCx}" y="${line1Y}" text-anchor="middle" font-family="'Spline Sans Mono', monospace" font-weight="600" font-size="${capSize}" fill="#ffffff" opacity="0.78" style="pointer-events:none">Bundle Sizer Lite</text>`;
+    s+=`<text x="${viewCx}" y="${line2Y}" text-anchor="middle" font-family="'Spline Sans Mono', monospace" font-size="${capSize*0.82}" fill="#ffffff" opacity="0.68" style="pointer-events:none">fullboostconsulting.com</text>`;
+    s+=`</svg>`;
+    stage.innerHTML=s;
+  }
+
+  // ---------- global handlers ----------
+  document.addEventListener('click',()=>{
+    document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));
+    document.querySelectorAll('.tip.open').forEach(t=>t.classList.remove('open'));
+  });
+  document.querySelectorAll('.tip').forEach(tip=>{
+    tip.addEventListener('click',e=>{ e.stopPropagation(); tip.classList.toggle('open'); });
+  });
+  $('gateBtn').addEventListener('click',()=>{ $('gate').classList.add('hidden'); });
+
+  spAdd.addEventListener('click',()=>addSpec());
+
+  // default: open with one 28 AWG 55M wire
+  addSpec("28","55m");
+  render();
+
+</script>
+</body>
+</html>
