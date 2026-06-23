@@ -86,16 +86,26 @@
   /* ---- spec grid (input model) ---- */
   .sp-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
-    gap: 7px;
-    margin-bottom: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+    gap: 9px;
+    margin-bottom: 9px;
   }
-  .sp-col { display: flex; flex-direction: column; gap: 6px; }
+  .sp-col {
+    display: flex; flex-direction: column; gap: 4px;
+    border: 1px solid var(--line); border-radius: 9px;
+    padding: 7px 8px; background: rgba(255,255,255,0.015);
+  }
+  .sp-row { display: grid; grid-template-columns: 1.55fr 1fr; gap: 5px; align-items: start; }
+  .sp-gauge { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .sp-qty { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .sp-qty input { margin: 0; }
   .sp-col .sp-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 4px;
     font-family: 'Spline Sans Mono', monospace;
-    font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase;
-    color: var(--ink-soft); font-weight: 600; text-align: center;
+    font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 600; padding-right: 1px;
   }
+  .sp-head-label { flex: 1; text-align: left; }
   .sp-spectoggle {
     display: flex; width: 100%;
     border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
@@ -103,7 +113,7 @@
   .sp-spectoggle button {
     flex: 1; min-width: 0;
     font-family: 'Spline Sans Mono', monospace; font-size: 9.5px; font-weight: 600;
-    padding: 4px 2px; border: none; border-left: 1px solid var(--line);
+    padding: 3px 2px; border: none; border-left: 1px solid var(--line);
     background: var(--paper); color: var(--ink-soft); cursor: pointer;
     transition: all 0.1s ease;
   }
@@ -112,8 +122,8 @@
   .sp-spectoggle button:disabled { opacity: 0.35; cursor: default; }
   .sp-col input {
     width: 100%;
-    font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 14px;
-    padding: 9px 6px; border: 1px solid var(--line); border-radius: 8px;
+    font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 13px;
+    padding: 6px 6px; border: 1px solid var(--line); border-radius: 7px;
     background: var(--paper); color: var(--ink);
     text-align: center; -moz-appearance: textfield; -webkit-appearance: none; appearance: none;
   }
@@ -122,25 +132,27 @@
   .sp-col.off .dd-toggle { color: var(--ink-soft); opacity: 0.7; }
   .sp-col.off input { opacity: 0.4; }
   .sp-swatch-row {
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    font-family: 'Spline Sans Mono', monospace; font-size: 9.5px; color: var(--ink-soft);
-    margin: -2px 0;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    font-family: 'Spline Sans Mono', monospace; font-size: 9px; color: var(--ink-soft);
+    margin: -1px 0;
   }
   .sp-swatch {
-    width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0;
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
     border: 1px solid rgba(255,255,255,0.55);
   }
   .sp-swatch-row[data-empty="1"] { opacity: 0.35; }
   .sp-mult-label {
-    font-family: 'Spline Sans Mono', monospace; font-size: 8.5px;
+    font-family: 'Spline Sans Mono', monospace; font-size: 8px;
     letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft);
-    text-align: center; opacity: 0.7; margin-top: -2px;
+    text-align: center; opacity: 0.7; margin-top: -1px;
   }
   .sp-col .sp-remove {
+    flex-shrink: 0; width: 17px; height: 17px; padding: 0;
+    display: flex; align-items: center; justify-content: center;
     background: rgba(255,255,255,0.04); border: 1px solid var(--line); color: var(--ink-soft);
-    font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-    cursor: pointer; padding: 5px 10px; border-radius: 7px;
-    font-family: 'Spline Sans Mono', monospace; transition: all 0.12s ease;
+    font-size: 13px; font-weight: 500; line-height: 1;
+    cursor: pointer; border-radius: 5px;
+    font-family: 'Archivo', sans-serif; transition: all 0.12s ease;
   }
   .sp-col .sp-remove:hover { background: rgba(255,77,77,0.14); border-color: var(--hot); color: var(--hot); }
 
@@ -148,8 +160,8 @@
   .dd { position: relative; width: 100%; }
   .dd-toggle {
     width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
-    font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 14px;
-    padding: 9px 6px; border: 1px solid var(--line); border-radius: 8px;
+    font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 13px;
+    padding: 6px 6px; border: 1px solid var(--line); border-radius: 7px;
     background: var(--paper); color: var(--ink); cursor: pointer; transition: border-color 0.12s ease;
   }
   .dd-toggle:hover { border-color: var(--copper); }
@@ -166,7 +178,7 @@
   .dd-opt {
     display: flex; align-items: center; justify-content: center; gap: 7px;
     font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 13px;
-    color: var(--ink); padding: 8px 6px; border-radius: 6px;
+    color: var(--ink); padding: 7px 6px; border-radius: 6px;
     cursor: pointer; transition: background 0.1s ease;
   }
   .dd-opt .dd-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.55); flex-shrink: 0; }
@@ -174,8 +186,8 @@
   .dd-opt.sel { background: var(--copper); color: #fff; }
 
   .sp-addbtn {
-    width: 100%; font-family: 'Archivo', sans-serif; font-size: 13px; font-weight: 600;
-    padding: 11px; border: 1px dashed var(--copper-bright); border-radius: 9px;
+    width: 100%; font-family: 'Archivo', sans-serif; font-size: 12.5px; font-weight: 600;
+    padding: 8px; border: 1px dashed var(--copper-bright); border-radius: 8px;
     background: rgba(61,130,245,0.08); color: var(--copper-bright);
     cursor: pointer; transition: all 0.15s ease;
   }
@@ -225,13 +237,13 @@
   .head-v .unit { font-size: 0.42em; font-weight: 500; color: rgba(255,255,255,0.8); letter-spacing: 0; margin-left: 4px; }
   .head-v.empty { color: rgba(255,255,255,0.45); }
   .head-sub {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); flex: 1;
+    display: grid; grid-template-columns: 0.85fr 1.3fr 0.85fr; gap: 1px; background: var(--line); flex: 1;
   }
   .head-cell {
     background: var(--paper-2); padding: 6px 4px; text-align: center;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
-  .head-cell .hc-v { font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 14px; }
+  .head-cell .hc-v { font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 14px; white-space: nowrap; }
   .head-cell .hc-k { font-size: 8px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin-top: 2px; }
   .head-note { font-size: 11px; color: var(--ink-soft); margin-top: 9px; line-height: 1.5; text-align: center; }
 
@@ -546,7 +558,7 @@
   function renumber(){
     const cols=[...spGrid.querySelectorAll('.sp-col')];
     cols.forEach((col,i)=>{
-      col.querySelector('.sp-head').textContent="Wire spec "+(i+1);
+      col.querySelector('.sp-head-label').textContent="Wire spec "+(i+1);
       col.querySelector('.sp-remove').style.visibility = cols.length>1 ? 'visible':'hidden';
     });
   }
@@ -607,19 +619,24 @@
     col.className='sp-col';
     col.dataset.spec=sp;
     col.innerHTML =
-      `<div class="sp-head"></div>`+
+      `<div class="sp-head"><span class="sp-head-label"></span><button class="sp-remove" title="Remove wire spec" aria-label="Remove">×</button></div>`+
       `<div class="sp-spectoggle">`+
         `<button type="button" data-spec="55m">55M</button>`+
         `<button type="button" data-spec="55a">55A</button>`+
       `</div>`+
-      `<div class="dd" data-value="">`+
-        `<button type="button" class="dd-toggle"><span class="dd-label">-</span><span class="dd-chev">▾</span></button>`+
-        `<div class="dd-menu">${buildDdOpts()}</div>`+
-      `</div>`+
-      `<div class="sp-swatch-row" data-empty="1"><span class="sp-swatch"></span><span class="sp-od">- mm OD</span></div>`+
-      `<input type="number" min="1" max="99" step="1" value="1" inputmode="numeric">`+
-      `<div class="sp-mult-label">× qty</div>`+
-      `<button class="sp-remove" title="Remove">remove</button>`;
+      `<div class="sp-row">`+
+        `<div class="sp-gauge">`+
+          `<div class="dd" data-value="">`+
+            `<button type="button" class="dd-toggle"><span class="dd-label">-</span><span class="dd-chev">▾</span></button>`+
+            `<div class="dd-menu">${buildDdOpts()}</div>`+
+          `</div>`+
+          `<div class="sp-swatch-row" data-empty="1"><span class="sp-swatch"></span><span class="sp-od">- mm OD</span></div>`+
+        `</div>`+
+        `<div class="sp-qty">`+
+          `<input type="number" min="1" max="99" step="1" value="1" inputmode="numeric">`+
+          `<div class="sp-mult-label">× qty</div>`+
+        `</div>`+
+      `</div>`;
     spGrid.appendChild(col);
 
     const dd=col.querySelector('.dd');
