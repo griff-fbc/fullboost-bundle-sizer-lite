@@ -315,7 +315,11 @@
   .sleeve-size-dd { flex: 1 1 70px; min-width: 0; opacity: 0.45; pointer-events: none; transition: opacity 0.14s ease; }
   .sleeve-size-dd.live { opacity: 1; pointer-events: auto; }
   .sleeve-size-dd .dd-toggle { padding: 7px 8px; font-size: 13px; justify-content: center; }
-  .sleeve-size-dd .dd-menu { max-height: 240px; }
+  .sleeve-size-dd .dd-menu {
+    max-height: 240px;
+    left: auto; right: 0; width: max-content; min-width: 180px; max-width: 80vw;
+  }
+  .sleeve-size-dd .dd-opt { gap: 14px; }
   .sleeve-result {
     margin-top: 8px; display: none;
     border: 1px solid var(--line); border-radius: 9px; overflow: hidden;
