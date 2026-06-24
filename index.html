@@ -23,7 +23,7 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; background: #000000; }
+  html { -webkit-text-size-adjust: 100%; background: #000000; overflow-x: hidden; }
 
   body {
     font-family: 'Archivo', system-ui, sans-serif;
@@ -32,6 +32,8 @@
     line-height: 1.5;
     padding: 7px 12px 20px;
     min-height: 100vh;
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   .wrap { max-width: 560px; margin: 0 auto; }
@@ -215,6 +217,15 @@
     font-family: 'Spline Sans Mono', monospace;
     font-size: clamp(9px, 2.1vw, 12px); color: #fff; line-height: 1.1;
   }
+  .sleeve-slideon {
+    flex: 0 0 auto; display: none; text-align: center; line-height: 1.05;
+    font-family: 'Spline Sans Mono', monospace; font-weight: 600; font-size: 14px; color: var(--ink);
+    padding-left: 2px;
+  }
+  .sleeve-slideon.show { display: block; }
+  .sleeve-slideon.bad { color: var(--hot); }
+  .sleeve-slideon .so-k { display: block; font-weight: 400; font-size: 8px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); margin-top: 1px; }
+  .hc-u { display: block; font-size: 8px; letter-spacing: 0.02em; opacity: 0.75; margin-top: 1px; text-transform: none; }
   .bundle-stage {
     width: 100%; height: 42vh; max-height: 56vw; margin: 0 auto;
     background:
@@ -284,26 +295,26 @@
   .bundle-card.dimmed { opacity: 0.4; filter: grayscale(0.7); pointer-events: none; transition: opacity 0.15s ease; }
 
   /* ---- sleeving controls ---- */
-  .sleeve-bar { display: flex; align-items: center; gap: 8px; margin: 11px 0 0; }
+  .sleeve-bar { display: flex; align-items: center; gap: 6px; margin: 11px 0 11px; flex-wrap: wrap; }
   .sleeve-pill {
-    display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
-    font-family: 'Spline Sans Mono', monospace; font-size: 11px; font-weight: 600;
-    letter-spacing: 0.04em; padding: 7px 12px; border-radius: 20px; cursor: pointer;
-    border: 1px solid var(--line); background: var(--paper); color: var(--ink-soft);
-    transition: all 0.14s ease;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0;
+    font-family: 'Archivo', sans-serif; font-size: 12.5px; font-weight: 600;
+    padding: 8px 14px; border-radius: 8px; cursor: pointer;
+    border: 1px dashed var(--copper-bright); background: rgba(61,130,245,0.08); color: var(--copper-bright);
+    transition: all 0.14s ease; white-space: nowrap;
   }
-  .sleeve-pill .sleeve-dot {
-    width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
-    background: var(--line); transition: background 0.14s ease;
+  .sleeve-pill:hover { background: rgba(61,130,245,0.16); border-style: solid; }
+  .sleeve-dot { display: none; }
+  .sleeve-pill.on {
+    border: 1px solid var(--copper); background: var(--copper); color: #fff;
   }
-  .sleeve-pill.on { border-color: var(--copper); background: rgba(21,89,214,0.16); color: var(--ink); }
-  .sleeve-pill.on .sleeve-dot { background: var(--good); }
-  .sleeve-dd { flex: 0 0 auto; width: auto; min-width: 96px; opacity: 0.45; pointer-events: none; transition: opacity 0.14s ease; }
+  .sleeve-pill.on:hover { background: var(--copper); }
+  .sleeve-dd { flex: 1 1 70px; min-width: 0; opacity: 0.45; pointer-events: none; transition: opacity 0.14s ease; }
   .sleeve-dd.live { opacity: 1; pointer-events: auto; }
-  .sleeve-dd .dd-toggle { padding: 7px 10px; font-size: 12px; }
-  .sleeve-size-dd { flex: 0 0 30%; opacity: 0.45; pointer-events: none; transition: opacity 0.14s ease; }
+  .sleeve-dd .dd-toggle { padding: 7px 8px; font-size: 12px; }
+  .sleeve-size-dd { flex: 1 1 70px; min-width: 0; opacity: 0.45; pointer-events: none; transition: opacity 0.14s ease; }
   .sleeve-size-dd.live { opacity: 1; pointer-events: auto; }
-  .sleeve-size-dd .dd-toggle { padding: 7px 10px; font-size: 13px; justify-content: center; }
+  .sleeve-size-dd .dd-toggle { padding: 7px 8px; font-size: 13px; justify-content: center; }
   .sleeve-size-dd .dd-menu { max-height: 240px; }
   .sleeve-result {
     margin-top: 8px; display: none;
@@ -421,18 +432,6 @@
   .credit-brew:hover { border-bottom-color: var(--copper-bright); }
 
   /* ---- feedback / validation ask ---- */
-  .feedback {
-    margin-top: 18px; padding: 14px 16px;
-    border: 1px solid var(--line); border-radius: 11px;
-    background: rgba(61,130,245,0.06); text-align: center;
-  }
-  .feedback-head {
-    font-family: 'Archivo', sans-serif; font-size: 14px; font-weight: 700;
-    color: var(--ink); margin: 0 0 6px;
-  }
-  .feedback-body { font-size: 12px; line-height: 1.55; color: var(--ink-soft); margin: 0; }
-  .feedback-body a { color: var(--copper-bright); text-decoration: none; border-bottom: 1px solid rgba(61,130,245,0.4); }
-  .feedback-body a:hover { border-bottom-color: var(--copper-bright); }
 
   /* ---- disclaimer gate ---- */
   .gate {
@@ -464,6 +463,11 @@
   .gate-btn:hover { background: var(--copper-bright); }
 
   @media (max-width: 420px) { .tip-bubble { width: 220px; right: -6px; } }
+  @media (max-width: 400px) {
+    body { padding-left: 8px; padding-right: 8px; }
+    .card { padding: 10px 10px; }
+    .bundle-card { padding: 10px; }
+  }
 </style>
 </head>
 <body>
@@ -510,7 +514,8 @@
         <span class="tip-bubble">
           <strong>How this is drawn</strong>
           <span class="tip-line">Each circle is a wire at its <b>finished OD</b> (conductor + insulation) from the TE control drawing.</span>
-          <span class="tip-line">Wires are packed tight and an enclosing circle is drawn around them. The headline is that circle's diameter: the bare bundle, no sleeving.</span>
+          <span class="tip-line">Wires are packed tight and an enclosing circle is drawn around them.</span>
+          <span class="tip-line"><b>Slide-on</b> is how much wider the sleeve is than the bundle before shrinking (ratio of expanded sleeve to bare bundle OD).</span>
         </span>
       </span>
     </div>
@@ -521,13 +526,13 @@
       </div>
       <div class="head-sub">
         <div class="head-cell"><div class="hc-v" id="hcCount">-</div><div class="hc-k">wires</div></div>
-        <div class="head-cell"><div class="hc-v" id="hcArea">-</div><div class="hc-k">CSA</div></div>
+        <div class="head-cell"><div class="hc-v" id="hcArea">-</div><div class="hc-k">CSA<span class="hc-u">mm²</span></div></div>
         <div class="head-cell"><div class="hc-v" id="hcFill">-</div><div class="hc-k">fill</div></div>
       </div>
     </div>
     <div class="sleeve-bar">
       <button class="sleeve-pill" id="sleevePill" type="button" role="switch" aria-checked="false">
-        <span class="sleeve-dot"></span><span class="sleeve-pill-label">Add sleeving</span>
+        <span class="sleeve-dot"></span><span class="sleeve-pill-label">Sleeved</span>
       </button>
       <div class="dd sleeve-dd" id="sleeveDd" data-value="dr25">
         <button type="button" class="dd-toggle"><span class="dd-label">DR-25</span><span class="dd-chev">▾</span></button>
@@ -537,6 +542,7 @@
         <button type="button" class="dd-toggle"><span class="dd-label">-</span><span class="dd-chev">▾</span></button>
         <div class="dd-menu" id="sleeveSizeMenu"></div>
       </div>
+      <span class="sleeve-slideon" id="sleeveSlideon"></span>
     </div>
     <div class="sleeve-result" id="sleeveResult"></div>
     <div class="stage-wrap">
@@ -566,9 +572,11 @@
     <details class="ref-details">
       <summary class="ref-summary"><span class="ref-chev">▸</span> Reference &amp; method notes</summary>
       <div class="ref-body">
-        <p style="margin:0;"><strong>Geometry only.</strong> Each wire is drawn at its <strong>finished outer diameter</strong> (conductor plus insulation) taken from TE Connectivity control drawings. <strong>55A</strong> (55A0111 / M22759/32, tin-coated copper, ETFE, 150&deg;C) and <strong>55M</strong> (55M0414, silver-plated alloy, ETFE, 200&deg;C). Wires are packed by a deterministic nearest-fit routine and the <strong>bundle diameter</strong> is the smallest circle that encloses every wire. Real looms settle differently under tension and tape, so treat this as a tidy-pack estimate, not a guaranteed dimension. No sleeving allowance is included in this lite version.</p>
+        <p style="margin:0;"><strong>Geometry only.</strong> Each wire is drawn at its <strong>finished outer diameter</strong> (conductor plus insulation) taken from TE Connectivity control drawings. <strong>55A</strong> (55A0111 / M22759/32, tin-coated copper, ETFE, 150&deg;C) and <strong>55M</strong> (55M0414, silver-plated alloy, ETFE, 200&deg;C). Wires are packed by a deterministic nearest-fit routine and the <strong>bundle diameter</strong> is the smallest circle that encloses every wire. Real looms settle differently under tension and tape, so treat this as a tidy-pack estimate, not a guaranteed dimension.</p>
+        <p style="margin:8px 0 0;"><strong>Sleeving</strong> uses TE DR-25 (2:1 heat-shrink). A size is recommended that slides over the bare bundle and recovers tight onto it. Sleeved &Oslash; is the bundle plus the size's recovered wall.</p>
+        <p style="margin:8px 0 0;"><strong>Slide-on</strong> is how much wider the sleeve is than the bundle before shrinking (ratio of expanded sleeve to bare bundle OD); more makes it easier to fit.</p>
         <p style="margin:8px 0 0;"><strong>Fill</strong> is the summed wire OD area divided by the enclosing-circle area. It's a rough measure of how tightly the bundle packs.</p>
-        <p style="margin:8px 0 0;"><strong>Sources:</strong> finished-wire diameters from <a href="https://www.te.com" target="_blank" rel="noopener">TE Connectivity</a> control drawings (55A0111, 55M0414).</p>
+        <p style="margin:8px 0 0;"><strong>Sources:</strong> finished-wire diameters from <a href="https://www.te.com" target="_blank" rel="noopener">TE Connectivity</a> control drawings (55A0111, 55M0414). DR-25 expanded/recovered diameters and wall thicknesses from the TE DR-25 heat-shrink tubing catalog (1654025).</p>
       </div>
     </details>
   </section>
@@ -577,13 +585,10 @@
     <strong>Guidance only.</strong> Verify every bundle dimension against real parts and the applicable standards before committing to a harness build. If in doubt, build a test piece. Full Boost Consulting Ltd accept no liability for reliance on these outputs.
   </div>
 
-  <div class="feedback">
-    <p class="feedback-head">Used it, then built it?</p>
-    <p class="feedback-body">If this tool saved you some time, help us make it better. <a href="mailto:Hello@fullboostconsulting.com?subject=Bundle%20Sizer%20feedback">Send us a screenshot</a> of the tool next to the measured diameter of the finished bundle. Every real data point helps us improve the tool for everyone.</p>
-  </div>
 
   <div class="credit">
     <p class="credit-built">Built by <a href="https://fullboostconsulting.com/" target="_blank" rel="noopener">Full Boost Consulting Ltd</a></p>
+    <p class="credit-line">Used it, then built it? <a href="mailto:Hello@fullboostconsulting.com?subject=Bundle%20Sizer%20feedback">Send us a screenshot</a> of the tool (bundle cores and packed bundle) next to the measured diameter of the finished bundle. Every real data point helps us improve.</p>
     <p class="credit-line">Like the tool? Spotted an issue? Want the full version, or one built for your team? <a href="https://fullboostconsulting.com/contact" target="_blank" rel="noopener">Get in touch</a>. We'd love to hear from you.</p>
     <p class="credit-line">And if it saved you some time, <a href="https://ko-fi.com/fullboostconsulting" target="_blank" rel="noopener" class="credit-brew">buy us a brew</a> ☕</p>
   </div>
@@ -972,7 +977,7 @@
   const sleeveSizeDd=$('sleeveSizeDd'), sleeveSizeMenu=$('sleeveSizeMenu');
   let sleeveSizeOverride=null;   // null = auto-recommend, else a size name string
   let lastBundleSig="";          // tracks bundle content to auto-reset override on change
-  const stageWatermark=$('stageWatermark'), stageWmUrl=$('stageWmUrl');
+  const stageWatermark=$('stageWatermark'), stageWmUrl=$('stageWmUrl'), sleeveSlideon=$('sleeveSlideon');
   const wireWarn=$('wireWarn'), bundleCard=$('bundleCard');
   let sleeveOn=false;
 
@@ -983,6 +988,7 @@
       legend.innerHTML="";
       stageWatermark.style.display="none";
       stageWmUrl.style.display="none";
+      sleeveSlideon.classList.remove('show');
       headDia.textContent="-"; headDia.classList.add('empty');
       hcCount.textContent="-"; hcArea.textContent="-"; hcFill.textContent="-";
       headNote.textContent="Add wires to size the bundle. Diameter is the smallest circle that encloses all packed wires at their finished OD.";
@@ -1002,7 +1008,7 @@
     headDia.classList.remove('empty');
     headDia.innerHTML = trim(Math.round(dia*100)/100)+'<span class="unit">mm</span>';
     hcCount.textContent=wires.length;
-    hcArea.textContent=(Math.round(wireArea*10)/10)+" mm²";
+    hcArea.textContent=(Math.round(wireArea*10)/10);
     hcFill.textContent=Math.round(fill)+"%";
 
     // sleeving
@@ -1049,12 +1055,20 @@
     }
     if(sleeve){
       const type=SLEEVING[sleeveDd.dataset.value].label;
-      headNote.innerHTML = `Bundle of ${wires.length} wire${wires.length>1?"s":""} at finished OD, sleeved in ${type} ${sleeve.name}". Sleeved Ø includes the recovered wall. Slide-on is how much wider the sleeve is than the bundle before shrinking (ratio of expanded sleeve to bare bundle OD).`;
+      headNote.innerHTML = `Bundle of ${wires.length} wire${wires.length>1?"s":""} at finished OD, sleeved in ${type} ${sleeve.name}". Sleeved Ø includes the recovered wall.`;
     } else {
       headNote.innerHTML = `Smallest circle enclosing ${wires.length} packed wire${wires.length>1?"s":""} at finished OD. Bare bundle, no sleeving allowance.`;
     }
 
-    drawSVG(placed,enc,sleeve);
+    const slideOnPct = sleeve ? Math.round(slideMargin(sleeve, dia)) : null;
+    if(sleeve && slideOnPct!=null){
+      sleeveSlideon.innerHTML = `${slideOnPct>=0?'+':''}${slideOnPct}%<span class="so-k">slide-on</span>`;
+      sleeveSlideon.classList.toggle('bad', slideOnPct<0);
+      sleeveSlideon.classList.add('show');
+    } else {
+      sleeveSlideon.classList.remove('show');
+    }
+    drawSVG(placed,enc,sleeve,slideOnPct);
     stageWatermark.style.display="flex";
     stageWmUrl.style.display="block";
   }
@@ -1073,11 +1087,10 @@
             `<div class="head-k">Sleeved Ø</div>`+
             `<div class="head-v">${trim(Math.round(sleevedDia*100)/100)}<span class="unit">mm</span></div>`+
           `</div>`+
-          `<div class="head-sub four">`+
-            `<div class="head-cell"><div class="hc-v ${tight?'bad':''}">${margin>=0?'+':''}${Math.round(margin)}%</div><div class="hc-k">slide-on</div></div>`+
-            `<div class="head-cell"><div class="hc-v">${trim(z.exp)}</div><div class="hc-k">expanded</div></div>`+
-            `<div class="head-cell"><div class="hc-v">${trim(z.rec)}</div><div class="hc-k">recovered</div></div>`+
-            `<div class="head-cell"><div class="hc-v">${trim(z.wall)}</div><div class="hc-k">wall</div></div>`+
+          `<div class="head-sub three">`+
+            `<div class="head-cell"><div class="hc-v">${trim(z.exp)}</div><div class="hc-k">expanded<span class="hc-u">mm</span></div></div>`+
+            `<div class="head-cell"><div class="hc-v">${trim(z.rec)}</div><div class="hc-k">recovered<span class="hc-u">mm</span></div></div>`+
+            `<div class="head-cell"><div class="hc-v">${trim(z.wall)}</div><div class="hc-k">wall<span class="hc-u">mm</span></div></div>`+
           `</div>`+
         `</div>`;
     } else {
@@ -1087,7 +1100,7 @@
       } else if(pick && pick.error==="loose"){
         msg = `Bundle is too small for ${type} ${pick.sizeName}".`;
       } else if(pick && pick.error==="small"){
-        msg = `Bundle is too small for ${type} (under ${trim(SLEEVING[sleeveDd.dataset.value].sizes[0].rec)} mm it won't grip).`;
+        msg = `Bundle is too small for ${type} ${SLEEVING[sleeveDd.dataset.value].sizes[0].name}".`;
       } else {
         msg = `Bundle is larger than the biggest ${type} size listed here. Full version covers larger ranges.`;
       }
@@ -1144,7 +1157,7 @@
     let s=`<svg viewBox="${minX} ${minY} ${width} ${height}" preserveAspectRatio="xMidYMid meet">`;
     // sleeving band (drawn first, behind wires) - dark heat-shrink hugging the bundle
     if(sleeve){
-      s+=`<circle cx="${enc.x}" cy="${enc.y}" r="${(enc.r+sleeveOuter)/2}" fill="none" stroke="#11151c" stroke-width="${sleeveWall}" opacity="0.92"/>`;
+      s+=`<circle cx="${enc.x}" cy="${enc.y}" r="${(enc.r+sleeveOuter)/2}" fill="none" stroke="#2e343f" stroke-width="${sleeveWall}" opacity="0.95"/>`;
       s+=`<circle cx="${enc.x}" cy="${enc.y}" r="${sleeveOuter}" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="${Math.max(enc.r*0.012,0.03)}"/>`;
       s+=`<circle cx="${enc.x}" cy="${enc.y}" r="${enc.r}" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="${Math.max(enc.r*0.01,0.025)}"/>`;
     } else {
